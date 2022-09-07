@@ -3,80 +3,66 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
+import ru.kata.spring.boot_security.demo.services.UserServiceImpl;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
+import java.security.Principal;
+
 
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final RoleService roleService;
 
     @Autowired
-    public AdminController(UserService userService, RoleService roleService) {
-        this.userService = userService;
+    public AdminController(UserServiceImpl userService, RoleService roleService) {
+        this.userService =  userService;
         this.roleService = roleService;
     }
 
     @GetMapping()
-    public String pageForAdmin(Model model) {
+    public String pageForAdmin(Model model, Principal principal) {
+//        StringBuilder roles = new StringBuilder();
+//        for (Role role : userService.findUserByEmail(principal.getName()).getRoles()) {
+//            roles.append(role.toString());
+//            roles.append(" ");
+//        }
+        System.out.println(userService.loadUserByUsername(principal.getName()) + " [htym");
+        model.addAttribute("thisUserRole",userService.findUserByEmail(principal.getName()).getRoles() );
         model.addAttribute("users", userService.findAll());
+        model.addAttribute("this_user", userService.loadUserByUsername(principal.getName()));
+        model.addAttribute("new_user", new User());
+        model.addAttribute("roles", roleService.findAllRoles());
         return "admin";
     }
 
-    @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user, Model model){
-        model.addAttribute("listRoles",roleService.findAllRoles());
-        return "newuser";
-    }
-
     @PostMapping("/new")
-    public String create(@RequestParam("role") ArrayList<Integer> roles,
-                             @ModelAttribute("user") @Valid User user,
-                             BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "newuser";
-        }
-        if (userService.findUserByUsername(user.getUsername()) != null) {
-            bindingResult.addError(new FieldError("username", "username",
-                    String.format("User with name \"%s\" is already exist!", user.getUsername())));
-            return "newuser";
-        }
-        user.setRoles(roleService.findRoleById(roles));
+    public String createUser(@ModelAttribute("user") @Valid User user,
+                             @RequestParam(value = "nameRoles") String[] roles) {
+        user.setRoles(roleService.getSetOfRoles(roles));
         userService.save(user);
-        return "redirect:/admin";
+        return "redirect:/admin/";
     }
 
     @DeleteMapping("/delete/{id}")
-    public String delete(@PathVariable("id") int id) {
+    public String delete(@PathVariable("id") int id, @ModelAttribute User user,
+                         @RequestParam(value = "deleteRole") String[] roles) {
+        user.setRoles(roleService.getSetOfRoles(roles));
         userService.deleteById(id);
         return "redirect:/admin";
     }
 
-    @GetMapping("/edit/{id}")
-    public String edit(Model model, @PathVariable("id") int id){
-        model.addAttribute("user", userService.getById(id));
-        model.addAttribute("listRoles",roleService.findAllRoles());
-        return "edituser";
-    }
-
-    @PatchMapping("{id}")
-    public String update(@RequestParam("role") ArrayList<Integer> roles,
-                         @PathVariable("id") int id,
-                         @ModelAttribute("user") @Valid User user,
-                         BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "edituser";
-        }
-        user.setRoles(roleService.findRoleById(roles));
-        userService.save(user);
+    @PatchMapping("/edit/{id}")
+    public String update(@PathVariable("id") int id, @ModelAttribute @Valid User user,
+                         @RequestParam(value = "editRoles") String[] roles) {
+        user.setRoles(roleService.getSetOfRoles(roles));
+        userService.update(user.getId(), user);
         return "redirect:/admin";
     }
 }

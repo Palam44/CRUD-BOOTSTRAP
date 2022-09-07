@@ -24,10 +24,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
+//    @Transactional
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(s);
+        User user = userRepository.findUserByEmail(s);
+        System.out.println(user);
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
@@ -37,21 +38,36 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     @Transactional
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User passwordCoder(User user) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return user;
     }
 
     @Override
-    public User getById(int id) {
-        return userRepository.getById(id);
+    public User findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
     }
 
     @Override
-    public void save(User user) {
-        userRepository.save(passwordCoder(user));
+    @Transactional
+    public void save(User user) { userRepository.save(passwordCoder(user));
     }
 
     @Override
+    @Transactional
+    public void update(int id, User updateUser) {
+        User user = userRepository.getById(id);
+        if (updateUser.getPassword().equals(user.getPassword())) {
+            userRepository.update(updateUser);
+        } else {
+            String pass = passwordEncoder.encode(updateUser.getPassword());
+            updateUser.setPassword(pass);
+            userRepository.update(updateUser);
+        }
+    }
+
+    @Override
+    @Transactional
     public void deleteById(int id) {
         userRepository.deleteById(id);
     }
@@ -59,11 +75,5 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
-    }
-
-    @Override
-    public User passwordCoder(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return user;
     }
 }
