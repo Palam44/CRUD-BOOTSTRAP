@@ -1,80 +1,95 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Users List</title>
-    <style>
-        table th, table td, form {
-            padding: 10px 5px;
-            font-family: sans-serif;
-            font-size: 14px;
-            border-style: solid;
-            border-width: 1px;
-            background-color: white;
-        }
-        button {
-            padding: 5px;
-            background: cornflowerblue;
-        }
-        .buttonDelete {
-            background: #fd3434;
-            color: white;
-        }
-        .buttonEdit {
-            background: palegoldenrod;
-            position: relative;
-            left: 50%;
-            transform: translate(-50%, 0);
-        }
-        .buttonLogout {
-            padding: 5px;
-            background-color: darkgray;
-        }
-    </style>
-
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
 </head>
-<body>
 
-<b> <font size="1"> <h1> Users list: </h1></font> </b>
-<table border="1">
-    <tr>
-        <th th:width="30">ID</th>
-        <th th:width="100">Name</th>
-        <th th:width="50">Age</th>
-        <th th:width="100">Country</th>
-        <th th:width="100">Username</th>
-        <th th:width="100">Password</th>
-        <th th:width="100">Role</th>
-        <th th:width="50">Edit</th>
-        <th th:width="50">Delete</th>
-    </tr>
-    <tr th:each="users : ${users}">
+<body>?
+    <div>
+        <p>User Information-Page</p>
+        <table border="1">
+            <thead>
+            <tr>
+                <td>ID</td>
+                <td>Fist Name</td>
+                <td>Last Name</td>
+                <td>Age</td>
+                <td>Email</td>
+                <td>Role</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr  th:object="${user}">
+                <td th:text="*{getId()}"></td>
+                <td th:text="*{getFistName()}"></td>
+                <td th:text="*{getLastName()}"></td>
+                <td th:text="*{getAge()}"></td>
+                <td th:text="*{getEmail()}"></td>
+                <td th:text="*{roles()}"></td>
+            </tr>
+            </tbody>
 
-        <td th:utext="${users.getId()}">Id</td>
-        <td th:utext="${users.name}">Name</a></td>
-        <td th:utext="${users.age}">Age</td>
-        <td th:utext="${users.country}">Country</td>
-        <td th:utext="${users.username}">Username</td>
-        <td th:utext="${users.password}">Password</td>
-        <td th:utext="${users.roles}">Role</td>
-        <td>
-            <form th:action="@{'/admin/edit/' + ${users.id}}">
-                <input class="buttonEdit" type="submit" value="Edit"/>
-            </form>
-        </td>
-        <td>
-            <form th:method="DELETE" th:action="@{'/admin/delete/' + ${users.id}}">
-                <input class="buttonDelete" type="submit" value="Delete"/>
-            </form>
-        </td>
-    </tr>
-</table>
+        </table>
+    </div>
 
-<br>
-<button onclick="window.location.href = '/admin/new';">Add new user</button>
-<br>
+    <div>
+        <p>Admin Panel</p>
+        <table>
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Fist Name</td>
+                    <td>Last Name</td>
+                    <td>Age</td>
+                    <td>Email</td>
+                    <td>Role</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}" >
+                    <td th:text="${user.getId()}"/>
+                    <td th:text="${user.getFistName()}"/>
+                    <td th:text="${user.getLastName()}"/>
+                    <td th:text="${user.getAge()}"/>
+                    <td th:text="${user.getEmail()}"/>
+                    <td th:text="${user.roles()}"/>
+                    <td>
+                        <form th:method="GET" th:action="@{/admin/{id}/edit(id=${user.getId()})}">
+                            <input type="submit" value="edit" />
+                        </form>
+                    </td>
+                    <td>
+                        <form th:method="DELETE" th:action="@{/admin/{id}/delete(id=${user.getId()})}" >
+                            <input type="submit" value="Delete" />
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
 
-<br>
-<button class="buttonLogout" onclick="window.location.href = '/logout';">Logout</button>
+        </table>
+
+    </div>
+
+    <br>
+    <form th:action="@{/admin/create}" th:method="GET">
+        <input type="submit" value="Create"/>
+    </form>
+    <br>
+    <form th:action="@{/user}" th:method="GET">
+        <input type="submit" value="info user"/>
+    </form>
+    <br>
+    <form action="#" th:action="@{/logout}" th:method="Get">
+        <input type="submit" value="exit"/>
+    </form>
+    </div>
+
+
+
+
 </body>
 </html>
