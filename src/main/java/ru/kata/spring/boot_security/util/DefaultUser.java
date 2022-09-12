@@ -32,24 +32,22 @@
 //        admin.setFistName("Anna");
 //        admin.setLastName("Teplova");
 //        admin.setEmail("1@1");
-//        admin.setUsername("Anna");
+//        admin.setUsername("Anna123");
 //        admin.setPassword("123");
 //
 //        admin.addRole(roleAdmin);
 //
 //
 //        User user = new User();
+//        user.setAge(1);
 //        user.setFistName("user");
 //        user.setLastName("user");
 //        user.setEmail("12@12");
-//        user.setAge(1);
-//        user.setUsername("user");
+//        user.setUsername("user1");
 //        user.setPassword("1");
 //        user.addRole(roleUser);
 //
 //        userService.add(admin);
 //        userService.add(user);
-//
-//
 //    }
 //}
