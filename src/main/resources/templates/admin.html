@@ -53,14 +53,14 @@
 
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="false">Users Table</a>
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="true">Users Table</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#add" role="tab" aria-controls="add" aria-selected="true">Add User</a>
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#add" role="tab" aria-controls="add" aria-selected="false">Add User</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="table" role="tabpanel" aria-labelledby="nav-table-tab">
+                <div class="tab-pane fade show active" id="table" role="tabpanel" aria-labelledby="home-tab">
                     <div class="col border bg-light">
                         <h2>All Users</h2>
                     </div>
@@ -215,57 +215,58 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="add" role="tabpanel" aria-labelledby="nav-add-tab">
-                    <div class="col border bg-light">
-                        <h2>All Users</h2>
-                    </div>
-                    <div class="w-100"/>
-                    <div class="col border bg-white">
-                        <br/>
-                        <form th:action="@{/admin/create}" th:object="${createUser}" method="post">
 
-                            <div class="form-group row justify-content-center text-center">
-                                <div class="col-sm-4">
-
-                                    <strong><label for="aUsername">Username</label></strong>
-                                    <input type="text" class="form-control" th:field="*{username}" id="aUsername" >
-                                    <br>
-
-                                    <strong><label for="aFirstName">First Name</label></strong>
-                                    <input type="text" class="form-control" th:field="*{fistName}" id="aFirstName" >
-                                    <br>
-
-                                    <strong><label for="aLastname">Last name</label></strong>
-                                    <input type="text" class="form-control" th:field="*{lastName}" id="aLastname" >
-                                    <br>
-
-                                    <strong><label for="aAge">Age</label></strong>
-                                    <input type="number" class="form-control" th:field="*{age}" id="aAge" >
-                                    <br>
-
-                                    <strong><label for="aEmail">Email</label></strong>
-                                    <input type="text" class="form-control" th:field="*{email}" id="aEmail" >
-                                    <br>
-
-                                    <strong><label for="aPassword">Password</label></strong>
-                                    <input type="password" class="form-control" th:field="*{password}" id="aPassword">
-                                    <br>
-
-                                    <strong><label for="roles">Role</label></strong>
-                                    <select multiple class="custom-select w-100" size="2" id="roles" name="aRole">
-                                        <option th:each="sRole : ${sRoles}" th:text="${sRole.toUpperCase()}" th:value="${sRole}"/>
-                                    </select>
-                                    <br>
-                                    <br>
-                                    <input type="submit" class="btn btn-success" value="Add new User"/>
-                                </div>
-                            </div>
-                            <br>
-                            <br>
-                        </form>
-                    </div>
-
+            </div>
+            <div class="tab-pane fade" id="add" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="col border bg-light">
+                    <h2>All Users</h2>
                 </div>
+                <div class="w-100"/>
+                <div class="col border bg-white">
+                    <br/>
+                    <form th:action="@{/admin/create}" th:object="${createUser}" method="post">
+
+                        <div class="form-group row justify-content-center text-center">
+                            <div class="col-sm-4">
+
+                                <strong><label for="aUsername">Username</label></strong>
+                                <input type="text" class="form-control" th:field="*{username}" id="aUsername" >
+                                <br>
+
+                                <strong><label for="aFirstName">First Name</label></strong>
+                                <input type="text" class="form-control" th:field="*{fistName}" id="aFirstName" >
+                                <br>
+
+                                <strong><label for="aLastname">Last name</label></strong>
+                                <input type="text" class="form-control" th:field="*{lastName}" id="aLastname" >
+                                <br>
+
+                                <strong><label for="aAge">Age</label></strong>
+                                <input type="number" class="form-control" th:field="*{age}" id="aAge" >
+                                <br>
+
+                                <strong><label for="aEmail">Email</label></strong>
+                                <input type="text" class="form-control" th:field="*{email}" id="aEmail" >
+                                <br>
+
+                                <strong><label for="aPassword">Password</label></strong>
+                                <input type="password" class="form-control" th:field="*{password}" id="aPassword">
+                                <br>
+
+                                <strong><label for="roles">Role</label></strong>
+                                <select multiple class="custom-select w-100" size="2" id="roles" name="aRole">
+                                    <option th:each="sRole : ${sRoles}" th:text="${sRole.toUpperCase()}" th:value="${sRole}"/>
+                                </select>
+                                <br>
+                                <br>
+                                <input type="submit" class="btn btn-success" value="Add new User"/>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>
