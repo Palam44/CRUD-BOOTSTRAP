@@ -1,7 +1,9 @@
-package ru.kata.spring.boot_security.model;
+package ru.kata.spring.boot_security.controller;
 
 
 import org.springframework.stereotype.Component;
+import ru.kata.spring.boot_security.model.Role;
+
 import java.util.List;
 
 @Component
@@ -13,7 +15,12 @@ public class RoleConverter {
         return roles.stream().map(RoleConverter::roleToString).toList();
     }
     static public String roleToString(Role role) {
-        return role.getName().split("_")[1].toLowerCase().replaceFirst(( (Character) role.getName().split("_")[1].toLowerCase().charAt(0)).toString(),( (Character) role.getName().split("_")[1].toUpperCase().toCharArray()[0]).toString());
+        return role.getName().split("_")[1].toLowerCase()
+                .replaceFirst(( (Character) role.getName()
+                        .split("_")[1].toLowerCase()
+                        .charAt(0)).toString(),( (Character) role.getName()
+                        .split("_")[1].toUpperCase()
+                        .toCharArray()[0]).toString());
     }
 
     static public List<Role> stringToRole(List<String> strings) {
@@ -22,5 +29,4 @@ public class RoleConverter {
     static public Role stringToRole(String role) {
         return new Role(prefix + role.toUpperCase());
     }
-
 }
