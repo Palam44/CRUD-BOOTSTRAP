@@ -47,11 +47,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void update(User user, Long id) {
-        user.setId(id);
-        user.setPassword(user.getPassword() != null && !user.getPassword().trim().equals("") ?
-                bCryptPasswordEncoder.encode(user.getPassword()) : userDao.getUserById(id).getPassword());
-        user.setUsername(userDao.getUserById(id).getUsername());
+    public void update(User user) {
+        user.setPassword(user.getPassword() != null && !user.getPassword().trim().equals("") ? bCryptPasswordEncoder.encode(user.getPassword()) : userDao.getUserById(user.getId()).getPassword());
+        user.setUsername(userDao.getUserById(user.getId()).getUsername());
         userDao.update(user);
     }
 

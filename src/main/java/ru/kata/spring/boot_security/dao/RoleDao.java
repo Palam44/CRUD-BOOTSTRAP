@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.dao;
 
-
 import ru.kata.spring.boot_security.model.Role;
 
 import java.util.Set;

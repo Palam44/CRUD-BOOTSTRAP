@@ -1,5 +1,4 @@
 package ru.kata.spring.boot_security.dao;
-
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.model.Role;
@@ -26,8 +25,7 @@ public class RoleDaoImpl implements RoleDao {
     @Override
     public Set<Role> getByName(String name) {
         String JPAql = "SELECT role FROM Role role WHERE role.name = :name";
-        return entityManager.createQuery(JPAql, Role.class)
-                .setParameter("name", name).getResultStream().collect(Collectors.toSet());
+        return entityManager.createQuery(JPAql, Role.class).setParameter("name", name).getResultStream().collect(Collectors.toSet());
     }
 
     @Override

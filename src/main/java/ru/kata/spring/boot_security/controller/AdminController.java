@@ -6,10 +6,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.model.RoleConverter;
 import ru.kata.spring.boot_security.model.User;
 import ru.kata.spring.boot_security.service.RoleService;
 import ru.kata.spring.boot_security.service.UserService;
 
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/admin")
@@ -22,31 +24,36 @@ public class AdminController {
 
     @GetMapping()
     public String index(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        model.addAttribute("user", userService.getUserByName(userDetails.getUsername()));
+        User user = userService.getUserByName(userDetails.getUsername());
+        model.addAttribute("me", user);
+        model.addAttribute("createUser", new User());
+        model.addAttribute("mySRoles", RoleConverter.roleToString( new ArrayList<>(user.getRoles().stream().toList())));
+        model.addAttribute("sRoles", RoleConverter.roleToString( new ArrayList<>(roleService.getAllRoles().stream().toList())));
         model.addAttribute("users", userService.getAllUsers());
+
         return "admin";
     }
 
-    @GetMapping("/{id}/edit")
-    public String editUser(@PathVariable(value = "id", required = false) Long id, Model model) {
-        User user = userService.getUserById(id);
-        if (user == null) {
-            return "redirect:/admin";
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("roles", roleService.getAllRoles());
-        return "edit";
-    }
-
     @PatchMapping("/{id}/update")
-    public String updateUser(@PathVariable(value = "id", required = false) Long id,
-                             @ModelAttribute("user") User user,
-                             @RequestParam(value = "namerole", required = false) String namerole,
-                             @RequestParam(value = "password", required = false) String password) {
+    public String updateUser(@PathVariable Long id,
+                             @RequestParam(value = "eFistName", required = false) String fistName,
+                             @RequestParam(value = "eLastName", required = false) String lastName,
+                             @RequestParam(value = "eAge", required = false) Integer age,
+                             @RequestParam(value = "eEmail", required = false) String email,
+                             @RequestParam(value = "eRole", required = false) String role) {
 
-        user.setRoles(roleService.getByName(namerole));
-        user.setPassword(password);
-        userService.update(user, id);
+        if ( role != null) {
+            User user = new User();
+            user.setId(id);
+            user.setFistName(fistName);
+            user.setLastName(lastName);
+            user.setAge(age);
+            user.setEmail(email);
+            user.setRoles(role.equals("Admin") ? roleService.getAllRoles() : roleService.getByName(RoleConverter.stringToRole(role).getName()) );
+
+            userService.update(user);
+        }
+
         return "redirect:/admin";
     }
 
@@ -56,20 +63,16 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/create")
-    public String createPage(Model model) {
-        model.addAttribute("user", new User());
-        model.addAttribute("roles", roleService.getAllRoles());
-        return "create";
-    }
-
     @PostMapping("/create")
     public String createUser(@ModelAttribute("user") User user,
-                             @RequestParam(value = "namerole", required = false) String namerole,
-                             @RequestParam(value = "username") String username) {
-        user.setUsername(username);
-        user.setRoles(roleService.getByName(namerole));
-        userService.add(user);
+                             @RequestParam(value = "aRole", required = false) String role) {
+
+        if (role != null && userService.getUserByName(user.getUsername()) == null ) {
+
+            user.setRoles(role.equals("Admin") ? roleService.getAllRoles() : roleService.getByName(RoleConverter.stringToRole(role).getName()) );
+            userService.add(user);
+        }
+
         return "redirect:/admin";
     }
 
